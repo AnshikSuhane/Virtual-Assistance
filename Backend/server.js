@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import { authRouter } from "./routes/auth.routes.js";
 import cors from "cors";
 import { userRouter } from "./routes/user.routes.js";
+import geminiResponse from "./gemini.js";
+import { geminiRouter } from "./routes/gemini.routes.js";
 
 const app = express();
 
@@ -13,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // no trailing slash
+    origin: "http://localhost:5173", 
     credentials: true,
   })
 );
@@ -21,10 +23,16 @@ app.use(
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/gemini", geminiRouter );
 
+app.get("/",async(req,res)=>{
+  let prompt=req.query.prompt
+  let data=await geminiResponse(prompt)
+  res.json(data)
+})
 const PORT = process.env.PORT || 8000;
 
-connectDb(); // Connect to MongoDB first
+connectDb(); 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);
 });

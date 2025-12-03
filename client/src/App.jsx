@@ -1,21 +1,23 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Signup from './pages/Signup'
+import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
 import Customize from './pages/Customize'
+import {  UsersContext } from './context/UserContext'
 import Home from './pages/Home'
-import { UsersContext } from './context/UserContext'
+import Customize2 from './pages/customize2'
 
-const App = () => {
-  const {userData,setuserData} = useContext(UsersContext)
+function App() {
+  const {userData,setUserData}=useContext(UsersContext)
   return (
-    <Routes>
-      <Route path="/" element={(userData?.assistantImage && userData?.assistantName)? <Home/> : <Navigate to={"/customize"}/>} />
-      <Route path="/signup" element={!userData?<Signup/>: <Navigate to={"/"}/>} />
-      <Route path="/signin" element={!userData?<SignIn/>: <Navigate to={"/"}/>} />
-      <Route path="/customize" element={userData?<Customize/>: <Navigate to={"/signin"}/>} />
-    </Routes>
+   <Routes>
+     <Route path='/' element={(userData?.assistantImage && userData?.assistantName)? <Home/> :<Navigate to={"/customize"}/>}/>
+    <Route path='/signup' element={!userData?<SignUp/>:<Navigate to={"/"}/>}/>
+     <Route path='/signin' element={!userData?<SignIn/>:<Navigate to={"/"}/>}/>
+      <Route path='/customize' element={userData?<Customize/>:<Navigate to={"/signup"}/>}/>
+       <Route path='/customize2' element={userData?<Customize2/>:<Navigate to={"/signup"}/>}/>
+   </Routes>
   )
 }
 
