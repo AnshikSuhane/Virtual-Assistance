@@ -1,69 +1,65 @@
-import axios from "axios";
+import axios from "axios"
+const geminiResponse=async (command,assistantName,userName)=>{
+try {
+    const apiUrl=process.env.GEMINI_API_URL
+    const prompt = `You are a virtual assistant named ${assistantName} created by ${userName}. 
+You are not Google. You will now behave like a voice-enabled assistant.
 
-const geminiResponse = async (prompt, assistantName, userName) => {
-    try {
-        const apiUrl = process.env.GEMINI_API_URL;
-
-        const systemPrompt = `
-You are a virtual assistant named ${assistantName}, created by ${userName}.
-You are NOT Google. You behave like a voice-enabled personal assistant.
-
-Your task is to understand the user's natural language input and respond with a JSON object in this exact format:
+Your task is to understand the user's natural language input and respond with a JSON object like this:
 
 {
-    "type": "general" | "google_search" | "youtube_search" | "youtube_play" | 
-             "get_time" | "get_day" | "get_month" | "get_date" |
-             "calculator_open" | "instagram_open" | "whatsapp_open" | 
-             "facebook_open" | "twitter_open" | "weather_show",
+  "type": "general" | "google-search" | "youtube-search" | "youtube-play" | "get-time" | "get-date" | "get-day" | "get-month"|"calculator-open" | "instagram-open" |"facebook-open" |"weather-show"
+  ,
+  "userInput": "<original user input>" {only remove your name from userinput if exists} and agar kisi ne google ya youtube pe kuch search karne ko bola hai to userInput me only bo search baala text jaye,
 
-    "userInput": "<original cleaned user input without your name>",
-
-    "response": "<short voice-friendly reply>
+  "response": "<a short spoken response to read out loud to the user>"
 }
 
 Instructions:
-- "type": determine the user's intent.
-- "userinput": original user sentence (remove the assistant's name if present).
-- "response": a short natural spoken reply such as 
-  "Sure, playing it now", "Here is what I found", "Today is Tuesday".
+- "type": determine the intent of the user.
+- "userinput": original sentence the user spoke.
+- "response": A short voice-friendly reply, e.g., "Sure, playing it now", "Here's what I found", "Today is Tuesday", etc.
 
 Type meanings:
-- "general": normal factual or conversational query.
-- "google_search": user wants to search something on Google.
-- "youtube_search": user wants to search something on YouTube.
-- "youtube_play": user wants to directly play a video or song.
-- "calculator_open": user wants to open the calculator.
-- "instagram_open": user wants Instagram.
-- "whatsapp_open": user wants WhatsApp.
-- "facebook_open": user wants Facebook.
-- "twitter_open": user wants Twitter.
-- "weather_show": user wants to know the weather.
-- "get_time": user asks for current time.
-- "get_day": user asks what day it is.
-- "get_date": user asks today's date.
-- "get_month": user asks for the current month.
+- "general": if it's a factual or informational question. aur agar koi aisa question puchta hai jiska answer tume pata hai usko bhi general ki category me rakho bas short answer dena
+- "google-search": if user wants to search something on Google .
+- "youtube-search": if user wants to search something on YouTube.
+- "youtube-play": if user wants to directly play a video or song.
+- "calculator-open": if user wants to  open a calculator .
+- "instagram-open": if user wants to  open instagram .
+- "facebook-open": if user wants to open facebook.
+-"weather-show": if user wants to know weather
+- "get-time": if user asks for current time.
+- "get-date": if user asks for today's date.
+- "get-day": if user asks what day it is.
+- "get-month": if user asks for the current month.
 
 Important:
 - Use ${userName} agar koi puche tume kisne banaya 
 - Only respond with the JSON object, nothing else.
 
-User input: ${prompt}
-        `;
- const result = await axios.post(apiUrl, {
-            contents: [
-                { parts: [{ text: systemPrompt }] }
-            ],
-            generationConfig: {
-                responseMimeType: "application/json"
-            }
-        });
 
-        return result.data.candidates[0].content.parts[0].text;
+now your userInput- ${command}
+`;
 
-    } catch (error) {
-        console.log("Gemini Error:", error.message);
-        return null;
-    }
+
+  const body = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ]
+    };
+
+    const result = await axios.post(apiUrl, body);
+
+    return result.data.candidates[0].content.parts[0].text;
+
+  } catch (error) {
+    console.log("❌ GEMINI ERROR:", error.response?.data || error);
+    return null;
+  }
 };
 
-export default geminiResponse;
+export default geminiResponse

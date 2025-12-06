@@ -10,20 +10,18 @@ const Signup = () => {
   const { serverUrl, userData, setuserData } = useContext(UsersContext);
   const navigate = useNavigate();
 
-  // Form state
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, seterror] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
-  // Signup handler
   const handleSignup = async (e) => {
     e.preventDefault();
-    setLoading(true); // Set loading to true when request starts
-    seterror(""); // Clear any previous errors
-    
+    setLoading(true);
+    seterror("");
+
     try {
       const result = await axios.post(
         `${serverUrl}/api/auth/signup`,
@@ -31,28 +29,40 @@ const Signup = () => {
         { withCredentials: true }
       );
       setuserData(result.data);
-      navigate("/customize")
+      navigate("/customize");
     } catch (error) {
       console.log(error);
       setuserData(null);
-      seterror(error.response.data.message);
+      seterror(error.response?.data?.message || "Something went wrong");
     } finally {
-      setLoading(false); // Set loading to false when request completes
+      setLoading(false);
     }
   };
 
   return (
     <div
-      className="w-full flex justify-center items-center h-[100vh] bg-cover"
+      className="w-full h-screen flex justify-center items-center bg-cover bg-center px-4 sm:px-6"
       style={{ backgroundImage: `url(${bg})` }}
     >
       <form
         onSubmit={handleSignup}
-        className="w-[90%] h-[600px] max-w-[500px] bg-black/20 backdrop-blur shadow-black flex flex-col items-center justify-center gap-[20px] p-6"
+        className="
+          w-full 
+          max-w-[500px] 
+          bg-black/20 
+          backdrop-blur 
+          shadow-black 
+          flex flex-col 
+          items-center 
+          justify-center 
+          gap-5 
+          px-6 
+          py-10 
+          rounded-xl
+        "
       >
-        <h1 className="text-white text-[30px] font-semibold text-center">
-          Register to{" "}
-          <span className="text-blue-400">Virtual Assistant</span>
+        <h1 className="text-white text-2xl sm:text-3xl font-semibold text-center leading-tight">
+          Register to <span className="text-blue-400">Virtual Assistant</span>
         </h1>
 
         {/* Name */}
@@ -61,9 +71,22 @@ const Signup = () => {
           placeholder="Enter your Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full h-[60px] outline-none border-2 border-white bg-transparent text-white placeholder-gray-300 px-[20px] py-[10px] rounded-full text-[18px]"
+          className="
+            w-full 
+            h-14 
+            outline-none 
+            border-2 
+            border-white 
+            bg-transparent 
+            text-white 
+            placeholder-gray-300 
+            px-5 
+            rounded-full 
+            text-base 
+            sm:text-lg
+          "
           required
-          disabled={loading} // Disable input when loading
+          disabled={loading}
         />
 
         {/* Email */}
@@ -72,41 +95,96 @@ const Signup = () => {
           placeholder="Enter your Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full h-[60px] outline-none border-2 border-white bg-transparent text-white placeholder-gray-300 px-[20px] py-[10px] rounded-full text-[18px]"
+          className="
+            w-full 
+            h-14 
+            outline-none 
+            border-2 
+            border-white 
+            bg-transparent 
+            text-white 
+            placeholder-gray-300 
+            px-5 
+            rounded-full 
+            text-base 
+            sm:text-lg
+          "
           required
-          disabled={loading} // Disable input when loading
+          disabled={loading}
         />
 
-        {/* Password with Eye Icon */}
-        <div className="relative w-full h-[60px] border-2 border-white bg-transparent text-white rounded-full text-[18px] flex items-center">
+        {/* Password */}
+        <div
+          className="
+            relative 
+            w-full 
+            h-14 
+            border-2 
+            border-white 
+            bg-transparent 
+            text-white 
+            rounded-full 
+            flex 
+            items-center
+          "
+        >
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Enter your Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-full outline-none bg-transparent text-white placeholder-gray-300 px-[20px] pr-[50px] rounded-full text-[18px]"
+            className="
+              w-full 
+              h-full 
+              outline-none 
+              bg-transparent 
+              text-white 
+              placeholder-gray-300 
+              px-5 
+              pr-12 
+              rounded-full 
+              text-base 
+              sm:text-lg
+            "
             required
-            disabled={loading} // Disable input when loading
+            disabled={loading}
           />
+
           {showPassword ? (
             <IoEyeOff
-              className="absolute right-[20px] text-[22px] text-white cursor-pointer"
-              onClick={() => !loading && setShowPassword(false)} // Prevent action when loading
+              className="absolute right-4 text-xl text-white cursor-pointer"
+              onClick={() => !loading && setShowPassword(false)}
             />
           ) : (
             <IoEye
-              className="absolute right-[20px] text-[22px] text-white cursor-pointer"
-              onClick={() => !loading && setShowPassword(true)} // Prevent action when loading
+              className="absolute right-4 text-xl text-white cursor-pointer"
+              onClick={() => !loading && setShowPassword(true)}
             />
           )}
         </div>
-        {error.length > 0 && <p className="text-red-500 text-[17px]">{error}</p>}
 
-        {/* Sign Up Button */}
+        {error.length > 0 && (
+          <p className="text-red-500 text-sm sm:text-base text-center">{error}</p>
+        )}
+
+        {/* Button */}
         <button
           type="submit"
-          className="min-w-[150px] h-[60px] bg-white rounded-full font-semibold hover:bg-gray-200 transition-colors flex justify-center items-center"
-          disabled={loading} // Disable button when loading
+          className="
+            min-w-[140px] 
+            h-14 
+            bg-white 
+            rounded-full 
+            font-semibold 
+            hover:bg-gray-200 
+            transition-colors 
+            flex 
+            justify-center 
+            items-center
+            text-base
+            sm:text-lg
+          "
+          disabled={loading}
         >
           {loading ? (
             <div className="w-6 h-6 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
@@ -115,11 +193,10 @@ const Signup = () => {
           )}
         </button>
 
-        {/* Redirect to Sign In */}
-        <p className="text-white text-[18px]">
+        <p className="text-white text-base sm:text-lg text-center">
           Already have an account?{" "}
           <span
-            onClick={() => !loading && navigate("/signin")} // Prevent navigation when loading
+            onClick={() => !loading && navigate("/signin")}
             className="cursor-pointer text-blue-400 hover:underline"
           >
             Sign In

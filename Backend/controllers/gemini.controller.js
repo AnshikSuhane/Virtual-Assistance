@@ -5,60 +5,65 @@ import moment from "moment";
 export const askToAssistant = async (req, res) => {
   try {
     const { command } = req.body;
-    const prompt = command;
     const user = await Usermodel.findById(req.userId);
+
+    // user.history.push(command);
+    // await user.save();
+
     const userName = user.name;
     const assistantName = user.assistantName;
 
-    const result = await geminiResponse(prompt, assistantName, userName);
+    const result = await geminiResponse(command, assistantName, userName);
 
     const jsonMatch = result.match(/{[\s\S]*}/);
     if (!jsonMatch) {
-      return res.status(400).json({ response: "Sorry, I can't understand" });
+      return res.status(400).json({ response: "sorry, i can't understand" });
     }
 
     const gemResult = JSON.parse(jsonMatch[0]);
+    console.log(gemResult);
+
     const type = gemResult.type;
 
     switch (type) {
-      case "get_date":
+      case "get-date":
         return res.json({
           type,
           userInput: gemResult.userInput,
           response: `current date is ${moment().format("YYYY-MM-DD")}`,
         });
 
-      case "get_time":
+      case "get-time":
         return res.json({
           type,
           userInput: gemResult.userInput,
-          response: `current time is ${moment().format("HH:mm:ss")}`,
+          response: `current time is ${moment().format("hh:mm A")}`, // kept your second version logic
         });
 
-      case "get_day":
+      case "get-day":
         return res.json({
           type,
           userInput: gemResult.userInput,
-          response: `Today day is ${moment().format("dddd")}`,
+          response: `today is ${moment().format("dddd")}`,
         });
 
-      case "get_month":
+      case "get-month":
         return res.json({
           type,
           userInput: gemResult.userInput,
-          response: `current Month is ${moment().format("MMMM")}`,
+          response: `today is ${moment().format("MMMM")}`,
         });
 
-      case "google_search":
-      case "youtube_search":
-      case "youtube_play":
+      case "google-search":
+      case "youtube-search":
+      case "youtube-play":
       case "general":
-      case "calculator_open":
-      case "instagram_open":
-      case "facebook_open":
-      case "weather_show":
-      case "twitter_open":
-      case "whatsapp_open":
+      case "calculator-open":
+      case "instagram-open":
+      case "facebook-open":
+      case "weather-show":
+      case "twitter-open":
+      case "whatsapp-open":
         return res.json({
           type,
           userInput: gemResult.userInput,
@@ -71,6 +76,6 @@ export const askToAssistant = async (req, res) => {
           .json({ response: "I didn't understand that command." });
     }
   } catch (error) {
-    return res.status(500).json({ response: "ask to assistant." });
+    return res.status(500).json({ response: "ask assistant error" });
   }
 };

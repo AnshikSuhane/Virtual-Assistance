@@ -1,29 +1,44 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext } from "react";
-import UserContext from "../context/UserContext";
+import { UsersContext } from "../context/UserContext";
 
-const  Card=({ image })=> {
+const Card = ({ image }) => {
   const {
-    setBackendImage,
-    setFrontendImage,
     selectedImage,
     setSelectedImage,
-  } = useContext(UserContext);
+    serverUrl,
+    userData,
+    setuserData,
+    frontendImage,
+    backendImage,
+    setFrontendImage,
+    setbackendImage,
+  } = useContext(UsersContext);
+
   return (
     <div
-      className={`w-[70px] h-[140px] lg:w-[150px] lg:h-[250px] bg-[#020220] border-2 border-[#0000ff66] rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-blue-950 cursor-pointer hover:border-4 hover:border-white ${
-        selectedImage == image
-          ? "border-4 border-white shadow-2xl shadow-blue-950 "
-          : null
-      }`}
+      className={`w-[120px] h-[200px] sm:w-[140px] sm:h-[230px] md:w-[150px] md:h-[250px] lg:w-[170px] lg:h-[270px] 
+        bg-[#020220] border-2 border-[#0000ff66] rounded-2xl overflow-hidden 
+        hover:shadow-2xl hover:shadow-blue-950 cursor-pointer hover:border-4 hover:border-white 
+        ${
+          selectedImage === image
+            ? "border-4 border-white shadow-2xl shadow-blue-950"
+            : null
+        }
+        transition-all duration-300`}
       onClick={() => {
         setSelectedImage(image);
-        setBackendImage(null);
+        setbackendImage(null);
         setFrontendImage(null);
       }}
     >
-      <img src={image} className="h-full object-cover" />
+      <img
+        src={image}
+        alt="custom card"
+        className="w-full h-full object-cover"
+      />
     </div>
   );
-}
+};
 
 export default Card;
