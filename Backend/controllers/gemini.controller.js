@@ -7,8 +7,8 @@ export const askToAssistant = async (req, res) => {
     const { command } = req.body;
     const user = await Usermodel.findById(req.userId);
 
-    // user.history.push(command);
-    // await user.save();
+    user.history.push(command);
+    await user.save();
 
     const userName = user.name;
     const assistantName = user.assistantName;
